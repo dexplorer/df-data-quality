@@ -1,0 +1,8 @@
+# standard 
+pytest
+pytest-cov
+pylint
+black
+ipython
+# app specific 
+great-expectations
