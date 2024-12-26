@@ -10,6 +10,7 @@ def get_expectation_by_id(exp_id, dq_expectations):
             return dq_expectation
     return None
 
+
 def get_dq_rules_by_dataset_id(dataset_id, dq_rules):
     dq_rules_for_dataset = []
 
@@ -33,29 +34,9 @@ def apply_dq_rules(batch, dq_rules, dq_expectations) -> list:
         # Execute the function name assignment, this mutates the local namespace
         exec(gen_func_str, globals(), _locals)
         # Grab the newly defined function name from the local namespace dictionary and assign it to generic function variable
-        gen_func = _locals['gen_func']
+        gen_func = _locals["gen_func"]
         # Pass function specific keyword arguments to the generic function
         expectation = gen_func(**dq_rule.kwargs)
-
-        # if dq_expectation.exp_name == "ExpectColumnValuesToBeUnique":
-        #     # Define the Expectation to test:
-        #     expectation = gx.expectations.ExpectColumnValuesToBeUnique(
-        #         # column=dq_rule.kwargs['column']
-        #         **dq_rule.kwargs
-        #     )
-
-        # elif dq_expectation.exp_name == "ExpectColumnValuesToBeInSet":
-        #     expectation = gx.expectations.ExpectColumnValuesToBeInSet(
-        #         **dq_rule.kwargs
-        #     )
-
-        # elif dq_expectation.exp_name == "ExpectColumnValuesToBeBetween":
-        #     expectation = gx.expectations.ExpectColumnValuesToBeBetween(
-        #         **dq_rule.kwargs
-        #     )
-
-        # else:
-        #     expectation = None
 
         if expectation:
             # Test the Expectation:
@@ -100,6 +81,11 @@ def main():
             exp_name="ExpectColumnValuesToBeBetween",
             ge_method="ExpectColumnValuesToBeBetween",
         ),
+        DQExpectation(
+            exp_id="4",
+            exp_name="ExpectColumnValuesToNotBeNull",
+            ge_method="ExpectColumnValuesToNotBeNull",
+        ),
     ]
 
     dq_rules = [
@@ -108,6 +94,7 @@ def main():
             dataset_id="1",
             exp_id="1",
             rule_fail_action="abort",
+            # Keyword arguments
             column="asset_id",
         ),
         DQRule(
@@ -116,7 +103,7 @@ def main():
             exp_id="2",
             rule_fail_action="abort",
             column="asset_type",
-            value_set=['equity', 'mutual fund']
+            value_set=["equity", "mutual fund"],
         ),
         DQRule(
             rule_id="3",
@@ -125,36 +112,66 @@ def main():
             rule_fail_action="proceed",
             column="asset_id",
             min_value=5,
-            max_value=50
+            max_value=50,
+        ),
+        DQRule(
+            rule_id="4",
+            dataset_id="2",
+            exp_id="4",
+            rule_fail_action="abort",
+            column="account_id",
+        ),
+        DQRule(
+            rule_id="5",
+            dataset_id="2",
+            exp_id="4",
+            rule_fail_action="abort",
+            column="asset_id",
+        ),
+        DQRule(
+            rule_id="6",
+            dataset_id="2",
+            exp_id="4",
+            rule_fail_action="abort",
+            column="asset_value",
         ),
     ]
 
-    dataset = LocalDelimFileDataset(
-        dataset_id="1",
-        cataloged_ind=True,
-        file_delim=",",
-        file_path="./data/test_data.csv",
-    )
-    # dataset.add_dq_rule()
-
-    # Get DQ rules defined for the dataset
-    dq_rules_for_dataset = get_dq_rules_by_dataset_id(dataset.dataset_id, dq_rules)
+    datasets = [
+        LocalDelimFileDataset(
+            dataset_id="1",
+            cataloged_ind=True,
+            file_delim=",",
+            file_path="./data/test_data1.csv",
+        ),
+        LocalDelimFileDataset(
+            dataset_id="2",
+            cataloged_ind=True,
+            file_delim=",",
+            file_path="./data/test_data2.csv",
+        ),
+    ]
 
     # Define the context
     context = gx.get_context()
 
-    # Use the `pandas_default` Data Source to retrieve a Batch of sample Data from a data file:
-    batch = context.data_sources.pandas_default.read_csv(dataset.file_path)
+    for dataset in datasets:
+        # Get DQ rules defined for the dataset
+        dq_rules_for_dataset = get_dq_rules_by_dataset_id(dataset.dataset_id, dq_rules)
 
-    dq_check_results = apply_dq_rules(batch, dq_rules_for_dataset, dq_expectations)
+        # Use the `pandas_default` Data Source to retrieve a Batch of sample Data from a data file:
+        batch = context.data_sources.pandas_default.read_csv(dataset.file_path)
 
-    if dq_check_results:
-        for dq_check_result in dq_check_results:
-            print(
-                f"Rule Id: {dq_check_result['rule_id']} Result: {dq_check_result['result']}"
-            )
-    else:
-        print("DQ check rules are not applied successfully.")
+        dq_check_results = apply_dq_rules(batch, dq_rules_for_dataset, dq_expectations)
+
+        print(f"DQ check results for dataset {dataset.file_path}")
+        if dq_check_results:
+            for dq_check_result in dq_check_results:
+                print(
+                    f"Rule Id: {dq_check_result['rule_id']} Result: {dq_check_result['result']}"
+                )
+        else:
+            print("DQ check rules are not applied successfully.")
 
 
 if __name__ == "__main__":
