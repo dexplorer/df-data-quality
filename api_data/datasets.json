@@ -1,0 +1,16 @@
+{
+    "datasets": [
+      {
+        "dataset_id": "1",
+        "catalog_ind": true,
+        "file_delim": ",",
+        "file_path": "APP_ROOT_DIR/data/source_data1.csv"
+      },
+      {
+        "dataset_id": "2",
+        "catalog_ind": true,
+        "file_delim": ",",
+        "file_path": "APP_ROOT_DIR/data/source_data2.csv"
+      }
+    ]
+}

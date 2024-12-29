@@ -1,177 +1,61 @@
-import great_expectations as gx
-from dataset import LocalDelimFileDataset
-from dq_expectation import DQExpectation
-from dq_rule import DQRule
+import settings as sc
 
+import os
+import argparse
+import logging
 
-def get_expectation_by_id(exp_id, dq_expectations):
-    for dq_expectation in dq_expectations:
-        if exp_id == dq_expectation.exp_id:
-            return dq_expectation
-    return None
-
-
-def get_dq_rules_by_dataset_id(dataset_id, dq_rules):
-    dq_rules_for_dataset = []
-
-    for dq_rule in dq_rules:
-        if dataset_id == dq_rule.dataset_id:
-            dq_rules_for_dataset.append(dq_rule)
-
-    return dq_rules_for_dataset
-
-
-def apply_dq_rules(batch, dq_rules, dq_expectations) -> list:
-    dq_check_results = []
-
-    for dq_rule in dq_rules:
-        dq_expectation = get_expectation_by_id(dq_rule.exp_id, dq_expectations)
-
-        # Assign the GE function name to a string
-        gen_func_str = f"gen_func = gx.expectations.{dq_expectation.exp_name}"
-        # Get local variables
-        _locals = locals()
-        # Execute the function name assignment, this mutates the local namespace
-        exec(gen_func_str, globals(), _locals)
-        # Grab the newly defined function name from the local namespace dictionary and assign it to generic function variable
-        gen_func = _locals["gen_func"]
-        # Pass function specific keyword arguments to the generic function
-        expectation = gen_func(**dq_rule.kwargs)
-
-        if expectation:
-            # Test the Expectation:
-            validation_results = batch.validate(expectation)
-
-            # Evaluate the Validation Results:
-            # print(validation_results)
-
-            dq_check_result = fmt_dq_check_result(
-                rule_id=dq_rule.rule_id, dq_check_output=validation_results
-            )
-            dq_check_results.append(dq_check_result)
-
-    return dq_check_results
-
-
-def fmt_dq_check_result(rule_id, dq_check_output) -> dict:
-    dq_check_status = dq_check_output["success"]
-
-    if dq_check_status:
-        dq_check_result = {"rule_id": rule_id, "result": dq_check_status}
-    else:
-        dq_check_result = {"rule_id": rule_id, "result": False}
-
-    return dq_check_result
+import dq_app_core as dqc
 
 
 def main():
-    dq_expectations = [
-        DQExpectation(
-            exp_id="1",
-            exp_name="ExpectColumnValuesToBeUnique",
-            ge_method="ExpectColumnValuesToBeUnique",
-        ),
-        DQExpectation(
-            exp_id="2",
-            exp_name="ExpectColumnValuesToBeInSet",
-            ge_method="ExpectColumnValuesToBeInSet",
-        ),
-        DQExpectation(
-            exp_id="3",
-            exp_name="ExpectColumnValuesToBeBetween",
-            ge_method="ExpectColumnValuesToBeBetween",
-        ),
-        DQExpectation(
-            exp_id="4",
-            exp_name="ExpectColumnValuesToNotBeNull",
-            ge_method="ExpectColumnValuesToNotBeNull",
-        ),
-    ]
+    script_name = os.path.splitext(os.path.basename(__file__))[0]
+    log_file = f"./log/{script_name}.log"
+    logging.basicConfig(
+        format="%(asctime)s : %(levelname)s : %(filename)s (%(lineno)d) : %(message)s",
+        datefmt="%Y-%m-%d %I:%M:%S %p",
+        level=logging.INFO,
+        filename=log_file,
+        filemode="w",
+    )
+    logging.captureWarnings(True)
+    # logging.FileHandler(filename, mode='a', encoding=None, delay=False)
 
-    dq_rules = [
-        DQRule(
-            rule_id="1",
-            dataset_id="1",
-            exp_id="1",
-            rule_fail_action="abort",
-            # Keyword arguments
-            column="asset_id",
-        ),
-        DQRule(
-            rule_id="2",
-            dataset_id="1",
-            exp_id="2",
-            rule_fail_action="abort",
-            column="asset_type",
-            value_set=["equity", "mutual fund"],
-        ),
-        DQRule(
-            rule_id="3",
-            dataset_id="1",
-            exp_id="3",
-            rule_fail_action="proceed",
-            column="asset_id",
-            min_value=5,
-            max_value=50,
-        ),
-        DQRule(
-            rule_id="4",
-            dataset_id="2",
-            exp_id="4",
-            rule_fail_action="abort",
-            column="account_id",
-        ),
-        DQRule(
-            rule_id="5",
-            dataset_id="2",
-            exp_id="4",
-            rule_fail_action="abort",
-            column="asset_id",
-        ),
-        DQRule(
-            rule_id="6",
-            dataset_id="2",
-            exp_id="4",
-            rule_fail_action="abort",
-            column="asset_value",
-        ),
-    ]
+    parser = argparse.ArgumentParser(description="Data Quality Validation Application")
+    parser.add_argument(
+        "-e", "--env", help="Environment", const="dev", nargs="?", default="dev"
+    )
+    parser.add_argument(
+        "-s",
+        "--src",
+        help="Source data",
+        const="1",
+        nargs="?",
+        default="1",
+        required=True,
+    )
 
-    datasets = [
-        LocalDelimFileDataset(
-            dataset_id="1",
-            cataloged_ind=True,
-            file_delim=",",
-            file_path="./data/test_data1.csv",
-        ),
-        LocalDelimFileDataset(
-            dataset_id="2",
-            cataloged_ind=True,
-            file_delim=",",
-            file_path="./data/test_data2.csv",
-        ),
-    ]
+    # Sample invocation
+    # python dq_app.py --env='dev'
 
-    # Define the context
-    context = gx.get_context()
+    logging.info(f"Starting {script_name}")
 
-    for dataset in datasets:
-        # Get DQ rules defined for the dataset
-        dq_rules_for_dataset = get_dq_rules_by_dataset_id(dataset.dataset_id, dq_rules)
+    # Get the arguments
+    args = vars(parser.parse_args())
+    logging.info(args)
+    env = args["env"]
+    src_dataset_id = args["src"]
 
-        # Use the `pandas_default` Data Source to retrieve a Batch of sample Data from a data file:
-        batch = context.data_sources.pandas_default.read_csv(dataset.file_path)
+    cfg = sc.load_config(env)  # pass ENV from command line argument later
+    sc.set_config(cfg)
+    # print(sc.source_file_path)
+    logging.info(cfg)
 
-        dq_check_results = apply_dq_rules(batch, dq_rules_for_dataset, dq_expectations)
+    dq_check_results = dqc.apply_dq_rules(dataset_id=src_dataset_id)
 
-        print(f"DQ check results for dataset {dataset.file_path}")
-        if dq_check_results:
-            for dq_check_result in dq_check_results:
-                print(
-                    f"Rule Id: {dq_check_result['rule_id']} Result: {dq_check_result['result']}"
-                )
-        else:
-            print("DQ check rules are not applied successfully.")
+    print(f"DQ check results for dataset {src_dataset_id}")
+    print(dq_check_results)
+
+    logging.info(f"Finishing {script_name}")
 
 
 if __name__ == "__main__":

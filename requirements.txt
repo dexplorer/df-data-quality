@@ -4,5 +4,7 @@ pytest-cov
 pylint
 black
 ipython
+# standard py app specific
+confuse
 # app specific 
 great-expectations

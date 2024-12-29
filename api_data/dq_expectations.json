@@ -1,0 +1,24 @@
+{
+    "dq_expectations": [
+      {
+        "exp_id": "1",
+        "exp_name": "ExpectColumnValuesToBeUnique",
+        "ge_method": "ExpectColumnValuesToBeUnique"
+      },
+      {
+        "exp_id": "2",
+        "exp_name": "ExpectColumnValuesToBeInSet",
+        "ge_method": "ExpectColumnValuesToBeInSet"
+      },
+      {
+        "exp_id": "3",
+        "exp_name": "ExpectColumnValuesToBeBetween",
+        "ge_method": "ExpectColumnValuesToBeBetween"
+      },
+      {
+        "exp_id": "4",
+        "exp_name": "ExpectColumnValuesToNotBeNull",
+        "ge_method": "ExpectColumnValuesToNotBeNull"
+      }
+    ]
+  }
