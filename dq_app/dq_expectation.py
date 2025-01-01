@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import json
-from utils import file_io as uf
+from dq_app.utils import file_io as uff
 
 import logging
 
@@ -19,7 +19,7 @@ class DQExpectation:
     @classmethod
     def from_json(self, json_file, json_key, exp_id):
         # with open(json_file, 'r') as f:
-        with uf.uf_open_file(file_path=json_file, open_mode="r") as f:
+        with uff.uf_open_file(file_path=json_file, open_mode="r") as f:
             dq_expectations = json.load(f)[json_key]
 
         try:

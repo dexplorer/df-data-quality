@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if [[ ! $@ ]]; then
+    python3 -m dq_app -h
+else
+    python3 -m dq_app $@
+fi

@@ -6,5 +6,9 @@ black
 ipython
 # standard py app specific
 confuse
+setuptools
 # app specific 
 great-expectations
+click 
+fastapi 
+uvicorn[standard] 

@@ -1,20 +1,20 @@
 import great_expectations as gx
-from dataset import LocalDelimFileDataset
-from dq_expectation import DQExpectation
-from dq_rule import DQRule
+from dq_app import dataset as ds
+from dq_app import dq_expectation as de
+from dq_app import dq_rule as dr
 
 import json
 
-import settings as sc
+from dq_app import settings as sc
 
 import logging
 
-from utils import file_io as uf
+from dq_app.utils import file_io as uff
 
 
-def get_expectation_by_id(exp_id: str) -> DQExpectation:
+def get_expectation_by_id(exp_id: str) -> de.DQExpectation:
     dq_expectations_json_file = f"{sc.api_data_path}/{sc.api_dq_expectations_file}"
-    dq_expectation = DQExpectation.from_json(
+    dq_expectation = de.DQExpectation.from_json(
         dq_expectations_json_file, "dq_expectations", exp_id
     )
 
@@ -22,7 +22,9 @@ def get_expectation_by_id(exp_id: str) -> DQExpectation:
     return dq_expectation
 
 
-def get_dq_rules_by_dataset_id(dataset_id: str, dq_rules: list[DQRule]) -> list[DQRule]:
+def get_dq_rules_by_dataset_id(
+    dataset_id: str, dq_rules: list[dr.DQRule]
+) -> list[dr.DQRule]:
     dq_rules_for_dataset = []
 
     for dq_rule in dq_rules:
@@ -33,9 +35,9 @@ def get_dq_rules_by_dataset_id(dataset_id: str, dq_rules: list[DQRule]) -> list[
     return dq_rules_for_dataset
 
 
-def get_all_dq_rules_from_json(json_file: str, json_key: str) -> list[DQRule]:
+def get_all_dq_rules_from_json(json_file: str, json_key: str) -> list[dr.DQRule]:
     # with open(json_file, 'r') as f:
-    with uf.uf_open_file(file_path=json_file, open_mode="r") as f:
+    with uff.uf_open_file(file_path=json_file, open_mode="r") as f:
         dq_rules: list[dict] = json.load(f)[json_key]
 
     try:
@@ -43,7 +45,7 @@ def get_all_dq_rules_from_json(json_file: str, json_key: str) -> list[DQRule]:
             # print(dq_rules)
             dq_rule_objects = []
             for dq_rule in dq_rules:
-                dq_rule_objects.append(DQRule(**dq_rule))
+                dq_rule_objects.append(dr.DQRule(**dq_rule))
             return dq_rule_objects
         else:
             raise ValueError("DQ rules data is invalid.")
@@ -56,7 +58,7 @@ def apply_dq_rules(dataset_id) -> list:
 
     # Simulate getting the dataset metadata from API
     datasets_json_file = f"{sc.api_data_path}/{sc.api_datasets_file}"
-    dataset = LocalDelimFileDataset.from_json(
+    dataset = ds.LocalDelimFileDataset.from_json(
         datasets_json_file, "datasets", dataset_id
     )
 

@@ -1,32 +1,21 @@
-import settings as sc
+from dq_app import settings as sc
 
 import os
 import argparse
 import logging
 
-import dq_app_core as dqc
+from dq_app import dq_app_core as dqc
+from dq_app.utils import logger as ufl
 
 
 def main():
-    script_name = os.path.splitext(os.path.basename(__file__))[0]
-    log_file = f"./log/{script_name}.log"
-    logging.basicConfig(
-        format="%(asctime)s : %(levelname)s : %(filename)s (%(lineno)d) : %(message)s",
-        datefmt="%Y-%m-%d %I:%M:%S %p",
-        level=logging.INFO,
-        filename=log_file,
-        filemode="w",
-    )
-    logging.captureWarnings(True)
-    # logging.FileHandler(filename, mode='a', encoding=None, delay=False)
-
     parser = argparse.ArgumentParser(description="Data Quality Validation Application")
     parser.add_argument(
         "-e", "--env", help="Environment", const="dev", nargs="?", default="dev"
     )
     parser.add_argument(
-        "-s",
-        "--src",
+        "-d",
+        "--dataset_id",
         help="Source data",
         const="1",
         nargs="?",
@@ -43,9 +32,10 @@ def main():
     args = vars(parser.parse_args())
     logging.info(args)
     env = args["env"]
-    src_dataset_id = args["src"]
+    src_dataset_id = args["dataset_id"]
 
-    cfg = sc.load_config(env)  # pass ENV from command line argument later
+    logging.info(f"Set configs")
+    cfg = sc.load_config(env)
     sc.set_config(cfg)
     # print(sc.source_file_path)
     logging.info(cfg)
@@ -59,4 +49,6 @@ def main():
 
 
 if __name__ == "__main__":
+    script_name = os.path.splitext(os.path.basename(__file__))[0]
+    ufl.config_logger(log_file_name=script_name)
     main()
