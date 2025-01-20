@@ -7,7 +7,7 @@ import os
 import click
 from dq_app import settings as sc
 from dq_app import dq_app_core as dqc
-from dq_app.utils import logger as ufl
+from utils import logger as ufl
 
 
 @click.command()
@@ -22,9 +22,12 @@ def apply_rules(dataset_id: str, env: str):
     See ./log/dq_app_cli.log for logs.
     """
 
-    logging.info(f"Set configs")
     cfg = sc.load_config(env)
     sc.set_config(cfg)
+
+    script_name = os.path.splitext(os.path.basename(__file__))[0]
+    ufl.config_logger(log_file_path_name=f"{sc.log_file_path}/{script_name}.log")
+    logging.info(f"Configs are set")
 
     logging.info(f"Start applying DQ rules on the dataset {dataset_id}")
     dq_check_results = dqc.apply_dq_rules(dataset_id=dataset_id)
@@ -46,8 +49,6 @@ cli.add_command(apply_rules)
 
 
 def main():
-    script_name = os.path.splitext(os.path.basename(__file__))[0]
-    ufl.config_logger(log_file_name=script_name)
     cli()
 
 

@@ -9,7 +9,7 @@ from dq_app import settings as sc
 
 import logging
 
-from dq_app.utils import file_io as uff
+from utils import file_io as uff
 
 
 def get_expectation_by_id(exp_id: str) -> de.DQExpectation:

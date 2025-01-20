@@ -5,7 +5,6 @@ install:
 lint:
 	pylint --disable=R,C *.py &&\
 	pylint --disable=R,C dq_app/*.py &&\
-	pylint --disable=R,C dq_app/utils/*.py &&\
 	pylint --disable=R,C dq_app/tests/*.py
 	# pylint --disable=R,C dq_rule.py
 
@@ -16,7 +15,6 @@ test:
 format:
 	black *.py &&\
 	black dq_app/*.py &&\
-	black dq_app/utils/*.py &&\
 	black dq_app/tests/*.py
 	# black cfg/*.yaml
 

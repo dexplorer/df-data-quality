@@ -12,3 +12,5 @@ great-expectations
 click 
 fastapi 
 uvicorn[standard] 
+# my packages
+git+https://github.com/dexplorer/utils#egg=utils

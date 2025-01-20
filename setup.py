@@ -2,11 +2,12 @@ import setuptools
 
 setuptools.setup(
     name="dq_app",
-    version="1.0",
+    version="1.0.0",
     scripts=["./scripts/dq_app"],
     author="Me",
     description="DQ validation app install.",
-    packages=["dq_app", "dq_app.utils"],
+    url="https://github.com/dexplorer/df-data-quality",
+    packages=["dq_app"],
     # packages = find_packages(),
     install_requires=[
         "setuptools",

@@ -28,14 +28,14 @@
   ##### Invoke the API endpoint
   ```sh
     https://<host name with port number>/apply-rules/{dataset_id}
-    https://<host name with port number>/apply-rules/2
+    https://<host name with port number>/apply-rules/1
   ```
   ##### Invoke the API from Swagger Docs interface
   ```sh
     https://<host name with port number>/docs
 
     /apply-rules/{dataset_id}
-    /apply-rules/2
+    /apply-rules/1
   ```
 
 ### Sample Input

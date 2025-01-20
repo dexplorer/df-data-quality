@@ -8,6 +8,7 @@ global APP_ROOT_DIR
 APP_ROOT_DIR = f"/workspaces/df-data-quality/dq_app"
 
 # Define config variables at module scope
+log_file_path = "" 
 source_file_path = ""
 api_data_path = ""
 api_datasets_file = ""
@@ -38,6 +39,9 @@ def load_config(env):
 
 
 def set_config(cfg):
+    global log_file_path
+    log_file_path = f"{resolve_app_path(cfg['log_file_path'])}"
+
     global source_file_path
     source_file_path = f"{resolve_app_path(cfg['source_file_path'])}"
 

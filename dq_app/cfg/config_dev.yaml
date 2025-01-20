@@ -1,6 +1,7 @@
 appName: dq_app
 logLevel: INFO
 CONFIG:
+  log_file_path: "APP_ROOT_DIR/log"
   source_file_path: "APP_ROOT_DIR/data"
   api_data_path: "APP_ROOT_DIR/api_data"
   api_datasets_file: "datasets.json"
