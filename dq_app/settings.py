@@ -5,15 +5,11 @@ import logging
 config = confuse.Configuration("dq_app", __name__)
 
 global APP_ROOT_DIR
-APP_ROOT_DIR = f"/workspaces/df-data-quality/dq_app"
+APP_ROOT_DIR = "/workspaces/df-data-quality/dq_app"
 
 # Define config variables at module scope
-log_file_path = "" 
+log_file_path = ""
 source_file_path = ""
-api_data_path = ""
-api_datasets_file = ""
-api_dq_expectations_file = ""
-api_dq_rules_file = ""
 
 
 def load_config(env):
@@ -44,19 +40,6 @@ def set_config(cfg):
 
     global source_file_path
     source_file_path = f"{resolve_app_path(cfg['source_file_path'])}"
-
-    global api_data_path
-    api_data_path = f"{resolve_app_path(cfg['api_data_path'])}"
-    logging.info(api_data_path)
-
-    global api_datasets_file
-    api_datasets_file = cfg["api_datasets_file"]
-
-    global api_dq_expectations_file
-    api_dq_expectations_file = cfg["api_dq_expectations_file"]
-
-    global api_dq_rules_file
-    api_dq_rules_file = cfg["api_dq_rules_file"]
 
 
 def resolve_app_path(rel_path):

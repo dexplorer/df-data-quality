@@ -15,11 +15,6 @@
     dq_app apply-rules --dataset_id "1" --env "dev"
   ```
 
-  ##### If not installed
-  ```sh
-    python dq_app apply-rules --dataset_id "1" --env "dev"
-  ```
-
 - **Apply DQ rules on a dataset via API**:
   ##### Start the API server
   ```sh
@@ -40,7 +35,7 @@
 
 ### Sample Input
 
-  ##### Dataset (source_data1.csv)
+  ##### Dataset (assets.csv)
 ```
 asset_id,asset_type,asset_name
 1,equity,HCL Tech
@@ -53,20 +48,17 @@ These are metadata that would be captured via the DQ application UI and stored i
   ##### datasets 
 ```
 {
-    "datasets": [
-      {
-        "dataset_id": "1",
-        "catalog_ind": true,
-        "file_delim": ",",
-        "file_path": "APP_ROOT_DIR/data/source_data1.csv"
-      },
-      {
-        "dataset_id": "2",
-        "catalog_ind": true,
-        "file_delim": ",",
-        "file_path": "APP_ROOT_DIR/data/source_data2.csv"
-      }
-    ]
+  "datasets": [
+    {
+      "dataset_id": "1",
+      "catalog_ind": true,
+      "file_delim": ",",
+      "file_path": "APP_ROOT_DIR/data/assets.csv",
+      "schedule_id": null,
+      "dq_rule_ids": null,
+      "model_parameters": null
+    }
+  ]
 }
 ```
 

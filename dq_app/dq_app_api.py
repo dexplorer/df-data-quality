@@ -1,8 +1,6 @@
 from dq_app import settings as sc
 from dq_app import dq_app_core as dqc
-from utils import logger as ufl
 import logging
-import os
 
 from fastapi import FastAPI
 import uvicorn
@@ -23,20 +21,17 @@ async def root():
 async def apply_rules(dataset_id: str, env: str = "dev"):
     """
     Apply DQ rules for the dataset.
-    See ./log/dq_app_cli.log for logs.
     """
 
     cfg = sc.load_config(env)
     sc.set_config(cfg)
 
-    # script_name = os.path.splitext(os.path.basename(__file__))[0]
-    # ufl.config_logger(log_file_path_name=f"{sc.log_file_path}/{script_name}.log")
-    logging.info(f"Configs are set")
+    logging.info("Configs are set")
 
-    logging.info(f"Start applying DQ rules on the dataset {dataset_id}")
+    logging.info("Start applying DQ rules on the dataset %s", dataset_id)
     dq_check_results = dqc.apply_dq_rules(dataset_id=dataset_id)
 
-    logging.info(f"Finished applying DQ rules on the dataset {dataset_id}")
+    logging.info("Finished applying DQ rules on the dataset %s", dataset_id)
 
     return {"results": dq_check_results}
 
