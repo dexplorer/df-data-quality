@@ -45,7 +45,7 @@ def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
         dq_expectation = de.DQExpectation.from_json(exp_id=dq_rule.exp_id)
 
         # Assign the GE function name to a string
-        gen_func_str = f"gen_func = gx.expectations.{dq_expectation.exp_name}"
+        gen_func_str = f"gen_func = gx.expectations.{dq_expectation.ge_method}"
         # Get local variables
         _locals = locals()
         # Execute the function name assignment, this mutates the local namespace
@@ -63,19 +63,32 @@ def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
             # print(validation_results)
 
             dq_check_result = fmt_dq_check_result(
-                rule_id=dq_rule.rule_id, dq_check_output=validation_results
+                rule_id=dq_rule.rule_id, exp_name=dq_expectation.exp_name, dq_check_output=validation_results
             )
             dq_check_results.append(dq_check_result)
 
     return dq_check_results
 
 
-def fmt_dq_check_result(rule_id, dq_check_output) -> dict:
-    dq_check_status = dq_check_output["success"]
+def fmt_dq_check_result(rule_id: str, exp_name: str, dq_check_output: dict) -> dict:
+    # dq_check_status = dq_check_output["success"]
 
-    if dq_check_status:
-        dq_check_result = {"rule_id": rule_id, "result": dq_check_status}
+    # if dq_check_status:
+    #     dq_check_result = {"rule_id": rule_id, "result": dq_check_status}
+    # else:
+    #     dq_check_result = {"rule_id": rule_id, "result": False}
+
+    # return dq_check_result
+
+    if dq_check_output["success"]:
+        dq_check_status = "Pass"
     else:
-        dq_check_result = {"rule_id": rule_id, "result": False}
+        dq_check_status = "Fail"
+
+    dq_check_result = {
+        "rule_id": rule_id,
+        "result": dq_check_status,
+        "expectation": exp_name,
+    }
 
     return dq_check_result
