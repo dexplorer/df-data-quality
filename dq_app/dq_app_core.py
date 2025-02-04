@@ -2,17 +2,18 @@ import great_expectations as gx
 from metadata import dataset as ds
 from metadata import dq_expectation as de
 from metadata import dq_rule as dr
-
+from app_calendar import eff_date as ed
 from dq_app import settings as sc
 
 import logging
 
 
-def apply_dq_rules(dataset_id) -> list:
+def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
 
     # Simulate getting the dataset metadata from API
     logging.info("Get dataset metadata")
-    dataset = ds.LocalDelimFileDataset.from_json(dataset_id)
+    # dataset = ds.LocalDelimFileDataset.from_json(dataset_id)
+    dataset = ds.get_dataset_from_json(dataset_id=dataset_id)
 
     # Simulate getting all DQ rules from API
     logging.info("Get all DQ rules")
@@ -22,11 +23,19 @@ def apply_dq_rules(dataset_id) -> list:
     logging.info("Get all DQ rules associated with the dataset")
     dq_rules_for_dataset = dr.get_dq_rules_by_dataset_id(dataset.dataset_id, dq_rules)
 
+    # Get current effective date
+    cur_eff_date = ed.get_cur_eff_date(
+        schedule_id=dataset.schedule_id, cycle_date=cycle_date
+    )
+    cur_eff_date_yyyymmdd = ed.fmt_date_str_as_yyyymmdd(cur_eff_date)
+
     # Define the GE context
     context = gx.get_context()
 
-    # Use the `pandas_default` Data Source to retrieve a Batch of sample Data from a data file:
-    src_file_path = sc.resolve_app_path(dataset.file_path)
+    # Read the source data file
+    src_file_path = sc.resolve_app_path(
+        dataset.resolve_file_path(cur_eff_date_yyyymmdd)
+    )
     batch = context.data_sources.pandas_default.read_csv(src_file_path)
 
     # Apply the DQ rules on the dataset

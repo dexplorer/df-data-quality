@@ -22,6 +22,15 @@ def main():
         default="1",
         required=True,
     )
+    parser.add_argument(
+        "-c",
+        "--cycle_date",
+        help="Cycle date",
+        const="1",
+        nargs="?",
+        default="",
+        required=False,
+    )
 
     # Sample invocation
     # python dq_app.py --env='dev'
@@ -35,16 +44,17 @@ def main():
     logging.info(args)
     env = args["env"]
     src_dataset_id = args["dataset_id"]
+    cycle_date = args["cycle_date"]
 
-    cfg = sc.load_config(env)
-    sc.set_config(cfg)
+    sc.load_config(env)
     # print(sc.source_file_path)
 
     ufl.config_logger(log_file_path_name=f"{sc.log_file_path}/{script_name}.log")
     logging.info("Configs are set")
-    logging.info(cfg)
 
-    dq_check_results = dqc.apply_dq_rules(dataset_id=src_dataset_id)
+    dq_check_results = dqc.apply_dq_rules(
+        dataset_id=src_dataset_id, cycle_date=cycle_date
+    )
 
     print("DQ check results for dataset %s", src_dataset_id)
     print(dq_check_results)

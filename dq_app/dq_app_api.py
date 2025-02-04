@@ -17,19 +17,18 @@ async def root():
     return {"message": "Data Quality Validation App"}
 
 
-@app.get("/apply-rules/{dataset_id}")
-async def apply_rules(dataset_id: str, env: str = "dev"):
+@app.get("/apply-rules/{dataset_id}/{cycle_date}")
+async def apply_rules(dataset_id: str, env: str = "dev", cycle_date: str = ""):
     """
     Apply DQ rules for the dataset.
     """
 
-    cfg = sc.load_config(env)
-    sc.set_config(cfg)
+    sc.load_config(env)
 
     logging.info("Configs are set")
 
     logging.info("Start applying DQ rules on the dataset %s", dataset_id)
-    dq_check_results = dqc.apply_dq_rules(dataset_id=dataset_id)
+    dq_check_results = dqc.apply_dq_rules(dataset_id=dataset_id, cycle_date=cycle_date)
 
     logging.info("Finished applying DQ rules on the dataset %s", dataset_id)
 

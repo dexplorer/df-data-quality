@@ -49,15 +49,18 @@ These are metadata that would be captured via the DQ application UI and stored i
 ```
 {
   "datasets": [
-    {
-      "dataset_id": "1",
-      "catalog_ind": true,
-      "file_delim": ",",
-      "file_path": "APP_ROOT_DIR/data/assets.csv",
-      "schedule_id": null,
-      "dq_rule_ids": null,
-      "model_parameters": null
-    }
+      {
+        "dataset_id": "1",
+        "dataset_kind": "local delim file",
+        "catalog_ind": true,
+        "file_delim": ",",
+        "file_path": "APP_ROOT_DIR/data/assets_yyyymmdd.csv",
+        "schedule_id": "2", 
+        "dq_rule_ids": null, 
+        "model_parameters": null, 
+        "recon_file_delim": "|", 
+        "recon_file_path": "APP_ROOT_DIR/data/assets_yyyymmdd.recon" 
+      }
   ]
 }
 ```
