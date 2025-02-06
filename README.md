@@ -2,9 +2,10 @@
 
 ### Install
 
-- **Install via setuptools**:
+- **Install via Makefile and pip**:
   ```sh
-    python setup.py install
+    make install
+    make setup
   ```
 
 
@@ -15,31 +16,37 @@
     dq_app apply-rules --dataset_id "1" --env "dev"
   ```
 
+- **Apply DQ rules on a dataset via CLI with cycle date override**:
+  ```sh
+    dq_app apply-rules --dataset_id "1" --env "dev" --cycle_date "2024-12-26"
+  ```
+
 - **Apply DQ rules on a dataset via API**:
   ##### Start the API server
   ```sh
-    python dq_app/dq_app_api.py
+    python dq_app/dq_app_api.py --env "dev"
   ```
   ##### Invoke the API endpoint
   ```sh
-    https://<host name with port number>/apply-rules/{dataset_id}
-    https://<host name with port number>/apply-rules/1
+    https://<host name with port number>/apply-rules/?dataset_id=<value>
+    https://<host name with port number>/apply-rules/?dataset_id=<value>&cycle_date=<value>
+
+    /apply-rules/?dataset_id=1
+    /apply-rules/?dataset_id=1&cycle_date=2024-12-26
   ```
   ##### Invoke the API from Swagger Docs interface
   ```sh
     https://<host name with port number>/docs
 
-    /apply-rules/{dataset_id}
-    /apply-rules/1
   ```
 
 ### Sample Input
 
-  ##### Dataset (assets.csv)
+  ##### Dataset (assets_20241226.csv)
 ```
-asset_id,asset_type,asset_name
-1,equity,HCL Tech
-2,mutual fund, Tata Digital Fund
+effective_date,asset_id,asset_type,asset_name
+2024-12-26,1,equity,HCL Tech
+2024-12-26,2,mutual fund, Tata Digital Fund
 ```
 
 ### API Data (simulated)

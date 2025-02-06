@@ -2,7 +2,7 @@ import logging
 import os
 
 import click
-from dq_app import settings as sc
+from dq_app.settings import ConfigParms as sc
 from dq_app import dq_app_core as dqc
 from utils import logger as ufl
 
@@ -28,10 +28,10 @@ def apply_rules(dataset_id: str, env: str, cycle_date: str):
     logging.info("Start applying DQ rules on the dataset %s", dataset_id)
     dq_check_results = dqc.apply_dq_rules(dataset_id=dataset_id, cycle_date=cycle_date)
 
-    logging.info("Finished applying DQ rules on the dataset %s", dataset_id)
-
     logging.info("DQ check results for dataset %s", dataset_id)
     logging.info(dq_check_results)
+
+    logging.info("Finished applying DQ rules on the dataset %s", dataset_id)
 
     return {"results": dq_check_results}
 

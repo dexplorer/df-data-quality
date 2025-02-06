@@ -2,9 +2,9 @@ import setuptools
 
 setuptools.setup(
     name="dq_app",
-    version="1.0.1",
+    version="1.0.2",
     scripts=["./scripts/dq_app"],
-    author="Me",
+    author="Rajakumaran Arivumani",
     description="DQ validation app install.",
     url="https://github.com/dexplorer/df-data-quality",
     packages=["dq_app"],
@@ -15,7 +15,7 @@ setuptools.setup(
         "numpy >= 1.26.4",
         "great-expectations==1.3.0",
         "requests",
-        "utils@git+https://github.com/dexplorer/utils#egg=utils-1.0.1",
+        "utils@git+https://github.com/dexplorer/utils#egg=utils-1.0.3",
         "metadata@git+https://github.com/dexplorer/df-metadata#egg=metadata-1.0.9",
         "app_calendar@git+https://github.com/dexplorer/df-app-calendar#egg=app_calendar-1.0.2",
     ],

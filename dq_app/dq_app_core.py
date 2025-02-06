@@ -3,7 +3,7 @@ from metadata import dataset as ds
 from metadata import dq_expectation as de
 from metadata import dq_rule as dr
 from app_calendar import eff_date as ed
-from dq_app import settings as sc
+from dq_app.settings import ConfigParms as sc
 
 import logging
 
@@ -71,15 +71,6 @@ def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
 
 
 def fmt_dq_check_result(rule_id: str, exp_name: str, dq_check_output: dict) -> dict:
-    # dq_check_status = dq_check_output["success"]
-
-    # if dq_check_status:
-    #     dq_check_result = {"rule_id": rule_id, "result": dq_check_status}
-    # else:
-    #     dq_check_result = {"rule_id": rule_id, "result": False}
-
-    # return dq_check_result
-
     if dq_check_output["success"]:
         dq_check_status = "Pass"
     else:
