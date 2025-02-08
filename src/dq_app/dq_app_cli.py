@@ -7,7 +7,13 @@ from dq_app import dq_app_core as dqc
 from utils import logger as ufl
 
 
-@click.command()
+# Create command group
+@click.group()
+def cli():
+    pass
+
+
+@cli.command()
 # @click.argument('dataset_id', required=1)
 @click.option(
     "--dataset_id", type=str, default="dev", help="Source dataset id", required=True
@@ -34,16 +40,6 @@ def apply_rules(dataset_id: str, env: str, cycle_date: str):
     logging.info("Finished applying DQ rules on the dataset %s", dataset_id)
 
     return {"results": dq_check_results}
-
-
-# Create command group
-@click.group()
-def cli():
-    pass
-
-
-# Add sub command to group
-cli.add_command(apply_rules)
 
 
 def main():
