@@ -31,7 +31,7 @@ async def root():
 async def apply_rules(dataset_id: str, cycle_date: str = ""):
     """
     Apply DQ rules for the dataset.
- 
+
      Args:
         dataset_id: Id of the dataset.
         cycle_date: Cycle date

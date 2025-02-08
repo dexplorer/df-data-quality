@@ -5,20 +5,18 @@
 - **Install via Makefile and pip**:
   ```sh
     make install
-    make setup
   ```
-
 
 ### Usage Examples
 
 - **Apply DQ rules on a dataset via CLI**:
   ```sh
-    dq_app apply-rules --dataset_id "1" --env "dev"
+    dq-app-cli apply-rules --dataset_id "1" --env "dev"
   ```
 
 - **Apply DQ rules on a dataset via CLI with cycle date override**:
   ```sh
-    dq_app apply-rules --dataset_id "1" --env "dev" --cycle_date "2024-12-26"
+    dq-app-cli apply-rules --dataset_id "1" --env "dev" --cycle_date "2024-12-26"
   ```
 
 - **Apply DQ rules on a dataset via API**:

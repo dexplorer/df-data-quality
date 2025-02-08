@@ -63,7 +63,9 @@ def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
             # print(validation_results)
 
             dq_check_result = fmt_dq_check_result(
-                rule_id=dq_rule.rule_id, exp_name=dq_expectation.exp_name, dq_check_output=validation_results
+                rule_id=dq_rule.rule_id,
+                exp_name=dq_expectation.exp_name,
+                dq_check_output=validation_results,
             )
             dq_check_results.append(dq_check_result)
 
