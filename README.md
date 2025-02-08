@@ -138,9 +138,10 @@ These are metadata that would be captured via the DQ application UI and stored i
 
 ```
 DQ check results for dataset 1
+
 [
-  {'rule_id': '1', 'result': True}, 
-  {'rule_id': '2', 'result': True}, 
-  {'rule_id': '3', 'result': False}
+  {'rule_id': '1', 'result': 'Pass', 'expectation': 'ExpectColumnValuesToBeUnique'}, 
+  {'rule_id': '2', 'result': 'Pass', 'expectation': 'ExpectColumnValuesToBeInSet'}, 
+  {'rule_id': '3', 'result': 'Fail', 'expectation': 'ExpectColumnValuesToBeBetween'}
 ]
 ```
