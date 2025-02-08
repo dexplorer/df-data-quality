@@ -6,9 +6,21 @@ test_data = [
         "1",
         "2024-12-26",
         [
-            {"expectation": "ExpectColumnValuesToBeUnique", "rule_id": "1", "result": 'Pass'},
-            {"expectation": "ExpectColumnValuesToBeInSet", "rule_id": "2", "result": 'Pass'},
-            {"expectation": "ExpectColumnValuesToBeBetween", "rule_id": "3", "result": 'Fail'},
+            {
+                "expectation": "ExpectColumnValuesToBeUnique",
+                "rule_id": "1",
+                "result": "Pass",
+            },
+            {
+                "expectation": "ExpectColumnValuesToBeInSet",
+                "rule_id": "2",
+                "result": "Pass",
+            },
+            {
+                "expectation": "ExpectColumnValuesToBeBetween",
+                "rule_id": "3",
+                "result": "Fail",
+            },
         ],
     )
 ]

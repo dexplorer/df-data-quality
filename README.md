@@ -22,7 +22,7 @@
 - **Apply DQ rules on a dataset via API**:
   ##### Start the API server
   ```sh
-    python dq_app/dq_app_api.py --env "dev"
+    dq-app-api --env "dev"
   ```
   ##### Invoke the API endpoint
   ```sh

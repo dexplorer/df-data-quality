@@ -47,7 +47,7 @@ async def apply_rules(dataset_id: str, cycle_date: str = ""):
     return {"results": dq_check_results}
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="Data Quality Application")
     parser.add_argument(
         "-e", "--env", help="Environment", const="dev", nargs="?", default="dev"
@@ -74,3 +74,7 @@ if __name__ == "__main__":
     )
 
     logging.info("Stopping the API service")
+
+
+if __name__ == "__main__":
+    main()

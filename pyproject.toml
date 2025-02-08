@@ -50,6 +50,7 @@ cli = [
 
 [project.scripts]
 dq-app-cli = "dq_app.dq_app_cli:main"
+dq-app-api = "dq_app.dq_app_api:main"
 
 [project.urls]
 Homepage = "https://profile.rajakumaran.in"
