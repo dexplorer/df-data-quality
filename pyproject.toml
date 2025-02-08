@@ -18,8 +18,6 @@ classifiers = [
 #license = "MIT"
 #license-files = ["LICEN[CS]E*"]
 dependencies = [
-  "requests",
-  'importlib-metadata; python_version<"3.10"',
   # standard 
   "pytest",
   "pytest-cov",
