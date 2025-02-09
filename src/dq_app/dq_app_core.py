@@ -3,13 +3,17 @@ from metadata import dataset as ds
 from metadata import dq_expectation as de
 from metadata import dq_rule as dr
 from app_calendar import eff_date as ed
-from dq_app.settings import ConfigParms as sc
+from config.settings import ConfigParms as sc
 
 import logging
 
 
 def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
-
+    # Simulate getting the cycle date from API
+    # Run this from the parent app
+    if not cycle_date:
+        cycle_date = ed.get_cur_cycle_date()
+        
     # Simulate getting the dataset metadata from API
     logging.info("Get dataset metadata")
     # dataset = ds.LocalDelimFileDataset.from_json(dataset_id)

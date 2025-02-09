@@ -34,6 +34,7 @@ dependencies = [
   "utils @ git+https://github.com/dexplorer/utils",
   "metadata @ git+https://github.com/dexplorer/df-metadata",
   "app_calendar @ git+https://github.com/dexplorer/df-app-calendar",
+  "config @ git+https://github.com/dexplorer/df-config",
 ]
 keywords = ["data", "quality", "etl", "elt", "framework", "governance"]
 
