@@ -13,7 +13,7 @@ def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
     # Run this from the parent app
     if not cycle_date:
         cycle_date = ed.get_cur_cycle_date()
-        
+
     # Simulate getting the dataset metadata from API
     logging.info("Get dataset metadata")
     # dataset = ds.LocalDelimFileDataset.from_json(dataset_id)
