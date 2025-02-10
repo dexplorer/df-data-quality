@@ -5,6 +5,10 @@ from metadata import dq_rule as dr
 from app_calendar import eff_date as ed
 from config.settings import ConfigParms as sc
 
+from pyspark.sql import SparkSession, DataFrame
+from utils import spark_io as ufs
+
+import os
 import logging
 
 
@@ -36,15 +40,47 @@ def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
     )
     cur_eff_date_yyyymmdd = ed.fmt_date_str_as_yyyymmdd(cur_eff_date)
 
-    # Define the GE context
-    context = gx.get_context()
-
-    # Read the source data file
-    src_file_path = sc.resolve_app_path(
-        dataset.resolve_file_path(cur_eff_date_yyyymmdd)
+    context = create_ge_context()
+    data_source = create_spark_data_source(
+        context=context, data_source_name="spark local"
     )
-    logging.info("Reading the file %s", src_file_path)
-    batch = context.data_sources.pandas_default.read_csv(src_file_path)
+    data_asset = create_data_asset(
+        data_source=data_source, data_asset_name="spark data"
+    )
+    batch_definition = add_batch_definition(
+        data_asset=data_asset, batch_definition_name="spark batch"
+    )
+    spark: SparkSession = ufs.create_spark_session(warehouse_path=sc.hive_warehouse_path)
+    src_df = ufs.create_empty_df(spark=spark)
+    if dataset.kind == ds.DatasetKind.LOCAL_DELIM_FILE:
+        # Read the source data file
+        src_file_path = sc.resolve_app_path(
+            dataset.resolve_file_path(cur_eff_date_yyyymmdd)
+        )
+
+        if os.path.exists(src_file_path):
+            logging.info("Reading the file %s", src_file_path)
+            src_df = ufs.read_delim_file_into_spark_df(
+                file_path=src_file_path,
+                delim=dataset.file_delim,
+                spark=spark,
+            )
+
+        else:
+            logging.info("File %s does not exist. Skipping the file.", src_file_path)
+
+    elif dataset.kind == ds.DatasetKind.SPARK_TABLE:
+        # Read the spark table
+        qual_table_name = dataset.get_qualified_table_name()
+        logging.info("Reading the spark table %s", qual_table_name)
+        src_df = ufs.read_spark_table_into_spark_df(
+            qual_table_name=qual_table_name,
+            cur_eff_date=cur_eff_date,
+            spark=spark,
+        )
+
+    batch_parameters = define_batch_parms_for_spark_df(df=src_df)
+    batch = batch_definition.get_batch(batch_parameters=batch_parameters)
 
     # Apply the DQ rules on the dataset
     logging.info("Apply DQ rules on the dataset")
@@ -78,6 +114,34 @@ def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
             dq_check_results.append(dq_check_result)
 
     return dq_check_results
+
+
+def create_ge_context():
+    # Define the GE context
+    context = gx.get_context(mode="ephemeral")
+    return context
+
+
+def create_spark_data_source(context, data_source_name: str):
+    data_source = context.data_sources.add_spark(name=data_source_name)
+    return data_source
+
+
+def create_data_asset(data_source, data_asset_name: str):
+    data_asset = data_source.add_dataframe_asset(name=data_asset_name)
+    return data_asset
+
+
+def add_batch_definition(data_asset, batch_definition_name: str):
+    batch_definition = data_asset.add_batch_definition_whole_dataframe(
+        batch_definition_name
+    )
+    return batch_definition
+
+
+def define_batch_parms_for_spark_df(df: DataFrame):
+    batch_parameters = {"dataframe": df}
+    return batch_parameters
 
 
 def fmt_dq_check_result(rule_id: str, exp_name: str, dq_check_output: dict) -> dict:
