@@ -20,8 +20,7 @@ classifiers = [
 dependencies = [
   # app specific 
   "great-expectations == 1.3.0",
-  "pandas >= 2.1.4",
-  "requests", 
+  "pandas == 2.1.4",
   # my packages
   "utils @ git+https://github.com/dexplorer/utils",
   "metadata @ git+https://github.com/dexplorer/df-metadata",
