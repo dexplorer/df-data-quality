@@ -43,6 +43,7 @@ def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
     src_file_path = sc.resolve_app_path(
         dataset.resolve_file_path(cur_eff_date_yyyymmdd)
     )
+    logging.info("Reading the file %s", src_file_path)
     batch = context.data_sources.pandas_default.read_csv(src_file_path)
 
     # Apply the DQ rules on the dataset
