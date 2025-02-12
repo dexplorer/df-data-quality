@@ -1,4 +1,5 @@
 import great_expectations as gx
+import importlib
 from metadata import dataset as ds
 from metadata import dq_expectation as de
 from metadata import dataset_dq_rule as dr
@@ -91,22 +92,28 @@ def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
         dq_expectation = de.DQExpectation.from_json(exp_id=dq_rule.exp_id)
 
         # Assign the GE function name to a string
-        gen_func_str = f"gen_func = gx.expectations.{dq_expectation.ge_method}"
-        # Get local variables
-        _locals = locals()
-        # Execute the function name assignment, this mutates the local namespace
-        exec(gen_func_str, globals(), _locals)
-        # Grab the newly defined function name from the local namespace dictionary and assign it to generic function variable
-        gen_func = _locals["gen_func"]
-        # Pass function specific keyword arguments to the generic function
+        mod_name = "great_expectations.expectations"
+        func_name = dq_expectation.ge_method
+        mod = importlib.import_module(mod_name)
+        # Get the function defined in the DQ batch object
+        gen_func = getattr(mod, func_name)
+        # Pass the keyword arguments to the function
         expectation = gen_func(**dq_rule.kwargs)
 
-        if expectation:
-            # Test the Expectation:
-            validation_results = batch.validate(expectation)
+        # Assign the GE function name to a string
+        # gen_func_str = f"gen_func = gx.expectations.{dq_expectation.ge_method}"
+        # Get local variables
+        # _locals = locals()
+        # Execute the function name assignment, this mutates the local namespace
+        # exec(gen_func_str, globals(), _locals)
+        # Grab the newly defined function name from the local namespace dictionary and assign it to generic function variable
+        # gen_func = _locals["gen_func"]
+        # Pass function specific keyword arguments to the generic function
+        # expectation = gen_func(**dq_rule.kwargs)
 
-            # Evaluate the Validation Results:
-            # print(validation_results)
+        if expectation:
+            # Run the validation
+            validation_results = batch.validate(expectation)
 
             dq_check_result = fmt_dq_check_result(
                 rule_id=dq_rule.rule_id,
