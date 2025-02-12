@@ -1,7 +1,7 @@
 import great_expectations as gx
 from metadata import dataset as ds
 from metadata import dq_expectation as de
-from metadata import dq_rule as dr
+from metadata import dataset_dq_rule as dr
 from app_calendar import eff_date as ed
 from config.settings import ConfigParms as sc
 
@@ -50,7 +50,9 @@ def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
     batch_definition = add_batch_definition(
         data_asset=data_asset, batch_definition_name="spark batch"
     )
-    spark: SparkSession = ufs.create_spark_session(warehouse_path=sc.hive_warehouse_path)
+    spark: SparkSession = ufs.create_spark_session(
+        warehouse_path=sc.hive_warehouse_path
+    )
     src_df = ufs.create_empty_df(spark=spark)
     if dataset.kind == ds.DatasetKind.LOCAL_DELIM_FILE:
         # Read the source data file
