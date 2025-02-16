@@ -55,7 +55,7 @@ def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
         warehouse_path=sc.hive_warehouse_path
     )
     src_df = ufs.create_empty_df(spark=spark)
-    if dataset.kind == ds.DatasetKind.LOCAL_DELIM_FILE:
+    if dataset.dataset_type == ds.DatasetType.LOCAL_DELIM_FILE:
         # Read the source data file
         src_file_path = sc.resolve_app_path(
             dataset.resolve_file_path(cur_eff_date_yyyymmdd)
@@ -72,7 +72,7 @@ def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
         else:
             logging.info("File %s does not exist. Skipping the file.", src_file_path)
 
-    elif dataset.kind == ds.DatasetKind.SPARK_TABLE:
+    elif dataset.dataset_type == ds.DatasetType.SPARK_TABLE:
         # Read the spark table
         qual_table_name = dataset.get_qualified_table_name()
         logging.info("Reading the spark table %s", qual_table_name)
