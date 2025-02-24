@@ -11,12 +11,12 @@
 
 - **Apply DQ rules on a dataset via CLI**:
   ```sh
-    dq-app-cli apply-rules --dataset_id "1" --env "dev"
+    dq-app-cli apply-rules --dataset_id "dataset_1" --env "dev"
   ```
 
 - **Apply DQ rules on a dataset via CLI with cycle date override**:
   ```sh
-    dq-app-cli apply-rules --dataset_id "1" --env "dev" --cycle_date "2024-12-26"
+    dq-app-cli apply-rules --dataset_id "dataset_1" --env "dev" --cycle_date "2024-12-26"
   ```
 
 - **Apply DQ rules on a dataset via API**:
@@ -29,8 +29,8 @@
     https://<host name with port number>/apply-rules/?dataset_id=<value>
     https://<host name with port number>/apply-rules/?dataset_id=<value>&cycle_date=<value>
 
-    /apply-rules/?dataset_id=1
-    /apply-rules/?dataset_id=1&cycle_date=2024-12-26
+    /apply-rules/?dataset_id=dataset_1
+    /apply-rules/?dataset_id=dataset_1&cycle_date=2024-12-26
   ```
   ##### Invoke the API from Swagger Docs interface
   ```sh
@@ -50,17 +50,16 @@ effective_date,asset_id,asset_type,asset_name
 ### API Data (simulated)
 These are metadata that would be captured via the DQ application UI and stored in a database.
 
-  ##### datasets 
+  ##### Datasets 
 ```
 {
   "datasets": [
     {
-      "dataset_id": "1",
+      "dataset_id": "dataset_1",
       "dataset_type": "local delim file",
-      "catalog_ind": true,
       "file_delim": ",",
       "file_path": "APP_DATA_IN_DIR/assets_yyyymmdd.csv",
-      "schedule_id": "2",
+      "schedule_id": "schedule_2",
       "recon_file_delim": "|",
       "recon_file_path": "APP_DATA_IN_DIR/assets_yyyymmdd.recon"
     }
@@ -68,7 +67,7 @@ These are metadata that would be captured via the DQ application UI and stored i
 }
 ```
 
-  ##### dq_expectations 
+  ##### DQ Expectations 
 ```
 {
     "dq_expectations": [
@@ -93,23 +92,24 @@ These are metadata that would be captured via the DQ application UI and stored i
         "ge_method": "ExpectColumnValuesToNotBeNull"
       }
     ]
-}
+  }
+  
 ```
 
-  ##### dataset_dq_rules 
+  ##### Dataset DQ Rules 
 ```
 {
     "dq_rules": [
       {
+        "dataset_id": "dataset_1",
         "rule_id": "1",
-        "dataset_id": "1",
         "exp_id": "1",
         "rule_fail_action": "abort",
         "column": "asset_id"
       },
       {
+        "dataset_id": "dataset_1",
         "rule_id": "2",
-        "dataset_id": "1",
         "exp_id": "2",
         "rule_fail_action": "abort",
         "column": "asset_type",
@@ -119,16 +119,16 @@ These are metadata that would be captured via the DQ application UI and stored i
         ]
       },
       {
+        "dataset_id": "dataset_1",
         "rule_id": "3",
-        "dataset_id": "1",
         "exp_id": "3",
         "rule_fail_action": "proceed",
         "column": "asset_id",
         "min_value": 5,
         "max_value": 50
-      },
+      }
     ]
-}
+  }
   
 ```
 
