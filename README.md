@@ -1,5 +1,19 @@
 # df-data-quality
 
+This application validates the source dataset with data quality rules configured for the dataset using the open source Great Expectations package.
+
+Application can be invoked using CLI or REST API end points. This allows the app to be integrated into a larger data ingestion / distribution framework.
+
+### Define the environment variables
+
+Create a .env file with the following variables.
+
+```
+ENV=dev
+APP_ROOT_DIR=
+
+```
+
 ### Install
 
 - **Install via Makefile and pip**:
@@ -11,18 +25,18 @@
 
 - **Apply DQ rules on a dataset via CLI**:
   ```sh
-    dq-app-cli apply-rules --dataset_id "dataset_1" --env "dev"
+    dq-app-cli apply-rules --dataset_id "dataset_1"
   ```
 
 - **Apply DQ rules on a dataset via CLI with cycle date override**:
   ```sh
-    dq-app-cli apply-rules --dataset_id "dataset_1" --env "dev" --cycle_date "2024-12-26"
+    dq-app-cli apply-rules --dataset_id "dataset_1" --cycle_date "2024-12-26"
   ```
 
 - **Apply DQ rules on a dataset via API**:
   ##### Start the API server
   ```sh
-    dq-app-api --env "dev"
+    dq-app-api
   ```
   ##### Invoke the API endpoint
   ```sh
