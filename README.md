@@ -11,7 +11,6 @@ Create a .env file with the following variables.
 ```
 ENV=dev
 APP_ROOT_DIR=
-
 ```
 
 ### Install
