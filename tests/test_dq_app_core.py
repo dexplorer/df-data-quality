@@ -3,7 +3,7 @@ from dq_app import dq_app_core as dqc
 
 test_data = [
     (
-        "1",
+        "dataset_1",
         "2024-12-26",
         [
             {

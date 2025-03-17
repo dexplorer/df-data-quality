@@ -1,6 +1,6 @@
 install: pyproject.toml
 	pip install --upgrade pip &&\
-	pip install --editable . &&\
+	TMPDIR=/home/ec2-user/pip_cache pip install --cache-dir=/home/ec2-user/pip_cache --editable . &&\
 	pip install --editable .[cli] &&\
 	pip install --editable .[api] &&\
 	pip install --editable .[test]

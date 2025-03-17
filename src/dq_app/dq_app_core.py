@@ -48,9 +48,7 @@ def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
     batch_definition = add_batch_definition(
         data_asset=data_asset, batch_definition_name="spark batch"
     )
-    spark: SparkSession = ufs.create_spark_session(
-        warehouse_path=sc.hive_warehouse_path
-    )
+    spark: SparkSession = ufs.create_spark_session(warehouse_path=sc.hive_warehouse_dir)
     src_df = ufs.create_empty_df(spark=spark)
     if dataset.dataset_type == ds.DatasetType.LOCAL_DELIM_FILE:
         # Read the source data file
