@@ -4,41 +4,44 @@ This application validates the source dataset with data quality rules configured
 
 Application can be invoked using CLI or REST API end points. This allows the app to be integrated into a larger data ingestion / distribution framework.
 
-### Define the environment variables
+### Define the Environment Variables
 
-Create a .env file with the following variables.
+Update one of the following .env files which is appropriate for the application hosting pattern.
 
 ```
-ENV=dev
-APP_ROOT_DIR=/workspaces/df-data-quality
-NAS_ROOT_DIR=/workspaces/nas
+on_prem_vm_native.env
+aws_ec2_native.env
+aws_ec2_container.env
+aws_ecs_container.env
 ```
 
 ### Install
 
 - **Install via Makefile and pip**:
-  ```sh
-    make install
+  ```
+    make install-dev
   ```
 
 ### Usage Examples
 
-- **Apply DQ rules on a dataset via CLI**:
+#### App Hosted Natively on a VM/EC2
+
+- **via CLI**:
   ```sh
-    dq-app-cli apply-rules --dataset_id "dataset_1"
+    dq-app-cli --app_host_pattern "aws_ec2_native" apply-rules --dataset_id "dataset_1"
   ```
 
-- **Apply DQ rules on a dataset via CLI with cycle date override**:
+- **via CLI with Cycle Date Override**:
   ```sh
-    dq-app-cli apply-rules --dataset_id "dataset_1" --cycle_date "2024-12-26"
+    dq-app-cli --app_host_pattern "aws_ec2_native" apply-rules --dataset_id "dataset_1" --cycle_date "2024-12-26"
   ```
 
-- **Apply DQ rules on a dataset via API**:
-  ##### Start the API server
+- **via API**:
+  ##### Start the API Server
   ```sh
-    dq-app-api
+    dq-app-api --app_host_pattern "aws_ec2_native"
   ```
-  ##### Invoke the API endpoint
+  ##### Invoke the API Endpoint
   ```sh
     https://<host name with port number>/apply-rules/?dataset_id=<value>
     https://<host name with port number>/apply-rules/?dataset_id=<value>&cycle_date=<value>
@@ -49,7 +52,50 @@ NAS_ROOT_DIR=/workspaces/nas
   ##### Invoke the API from Swagger Docs interface
   ```sh
     https://<host name with port number>/docs
+  ```
 
+#### App Hosted as Container on a VM/EC2
+
+- **via CLI**:
+  ```sh
+	docker run \
+	--mount=type=bind,src=/home/ec2-user/workspaces/nas,dst=/nas \
+  --rm -it df-data-quality \
+  dq-app-cli --app_host_pattern "aws_ec2_container" apply-rules --dataset_id "dataset_3"
+  ```
+
+- **via CLI with Cycle Date Override**:
+  ```sh
+	docker run \
+	--mount=type=bind,src=/home/ec2-user/workspaces/nas,dst=/nas \
+  --rm -it df-data-quality:latest \
+  dq-app-cli --app_host_pattern "aws_ec2_container" apply-rules --dataset_id "dataset_3" --cycle_date "2024-12-26"
+  ```
+
+- **via API**:
+  ##### Start the API server
+  ```sh
+	docker run \
+	--mount=type=bind,src=/home/ec2-user/workspaces/nas,dst=/nas \
+	-p 9090:9090 \
+	--rm -it df-data-quality:latest \
+  dq-app-api --app_host_pattern "aws_ec2_container"
+  ```
+
+#### App Hosted as a Container on AWS ECS
+
+- **via CLI**:
+  ##### Invoke CLI App by Deploying ECS Task using ECS Task Definition 
+  Enter the following command override under 'Container Overrides'. 
+  ```sh
+  "dq-app-cli", "--app_host_pattern", "aws_ecs_container", "apply-rules", "--dataset_id", "dataset_103", "--cycle_date", "2024-12-26"
+  ```
+
+- **via API**:
+  ##### Invoke API App by Deploying ECS Task using ECS Task Definition 
+  Enter the following command override under 'Container Overrides'. 
+  ```sh
+  "dq-app-api", "--app_host_pattern", "aws_ecs_container"
   ```
 
 ### Sample Input
@@ -65,7 +111,7 @@ effective_date,asset_id,asset_type,asset_name
 These are metadata that would be captured via the DQ application UI and stored in a database.
 
   ##### Datasets 
-```
+```json
 {
   "datasets": [
     {
@@ -82,7 +128,7 @@ These are metadata that would be captured via the DQ application UI and stored i
 ```
 
   ##### DQ Expectations 
-```
+```json
 {
     "dq_expectations": [
       {
@@ -111,7 +157,7 @@ These are metadata that would be captured via the DQ application UI and stored i
 ```
 
   ##### Dataset DQ Rules 
-```
+```json
 {
     "dq_rules": [
       {
@@ -148,9 +194,9 @@ These are metadata that would be captured via the DQ application UI and stored i
 
 ### Sample Output 
 
-```
 DQ check results for dataset 1
 
+```
 [
   {'rule_id': '1', 'result': 'Pass', 'expectation': 'ExpectColumnValuesToBeUnique'}, 
   {'rule_id': '2', 'result': 'Pass', 'expectation': 'ExpectColumnValuesToBeInSet'}, 

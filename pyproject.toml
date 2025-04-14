@@ -19,23 +19,29 @@ classifiers = [
 #license-files = ["LICEN[CS]E*"]
 dependencies = [
   # app specific 
-  "great-expectations == 1.3.0",
+  "great-expectations == 1.3.14",
   "pyspark == 3.5.4",
   "python-dotenv", 
-  # my packages
-  "utils",
-  "metadata",
-  "app_calendar",
-  "config",
-  # my packages
-  #"utils @ git+https://github.com/dexplorer/utils",
-  #"metadata @ git+https://github.com/dexplorer/df-metadata",
-  #"app_calendar @ git+https://github.com/dexplorer/df-app-calendar",
-  #"config @ git+https://github.com/dexplorer/df-config",
 ]
 keywords = ["data", "quality", "etl", "elt", "framework", "governance"]
 
 [project.optional-dependencies]
+my-packages-local = [
+  # my packages (installed locally)
+  "utils[spark]",
+  "utils[aws]",
+  "metadata",
+  "app_calendar",
+  "config",
+]
+my-packages-container = [
+  # my packages (source in container)
+  "utils[spark] @ file:///packages/utils",
+  "utils[aws] @ file:///packages/utils",
+  "metadata @ file:///packages/df-metadata",
+  "app_calendar @ file:///packages/df-app-calendar",
+  "config @ file:///packages/df-config",
+]
 api = [
   "fastapi" , 
   "uvicorn[standard]", 
@@ -51,6 +57,12 @@ test = [
   "black",
   "ipython",
 ]
+all-dev = [
+  "dq_app[my-packages-local, cli, api, test]"
+  ]
+all = [
+  "dq_app[my-packages-container, cli, api]"
+  ]
 
 [project.scripts]
 dq-app-cli = "dq_app.dq_app_cli:main"
