@@ -76,29 +76,7 @@ AWS_ECR_REPO := dexplorer/df-data-quality
 aws-auth-to-ecr:
 	aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/d0h7o5k8
 
-aws-build-image:
-	docker build \
-	--build-context utils=/home/ec2-user/workspaces/utils \
-	--build-context df-metadata=/home/ec2-user/workspaces/df-metadata \
-	--build-context df-app-calendar=/home/ec2-user/workspaces/df-app-calendar \
-	--build-context df-config=/home/ec2-user/workspaces/df-config \
-	--build-arg PYTHON_VERSION=${PYTHON_VERSION} \
-	--build-arg CONTAINER_PORT=${CONTAINER_PORT} \
-	-t ${AWS_ECR_REPO} .
-
-aws-build-clean-image:
-	docker build \
-	--build-context utils=/home/ec2-user/workspaces/utils \
-	--build-context df-metadata=/home/ec2-user/workspaces/df-metadata \
-	--build-context df-app-calendar=/home/ec2-user/workspaces/df-app-calendar \
-	--build-context df-config=/home/ec2-user/workspaces/df-config \
-	--build-arg PYTHON_VERSION=${PYTHON_VERSION} \
-	--build-arg CONTAINER_PORT=${CONTAINER_PORT} \
-	--no-cache \
-	-t ${AWS_ECR_REPO} .
-
 aws-tag-image:
-	# docker tag ${AWS_ECR_REPO}:${IMAGE_TAG} ${AWS_ECR}/${AWS_ECR_REPO}:${IMAGE_TAG}
 	docker tag ${IMAGE}:${IMAGE_TAG} ${AWS_ECR}/${AWS_ECR_REPO}:${IMAGE_TAG}
 
 aws-push-image:

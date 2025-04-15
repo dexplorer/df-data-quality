@@ -105,7 +105,6 @@ def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
                 delim=dataset.file_delim,
                 spark=spark,
             )
-
         else:
             logging.info("File %s does not exist. Skipping the file.", src_file_uri)
 

@@ -102,6 +102,6 @@ USER app-user
 
 # Run the application.
 CMD ["/bin/bash"]
-# CMD ["dp-app-api"]
-# CMD ["dp-app-api", "--debug"]
-# CMD ["dp-app-api", "--debug", "y"]
+# CMD ["dq-app-api"]
+# CMD ["dq-app-api", "--debug"]
+# CMD ["dq-app-api", "--debug", "y"]
