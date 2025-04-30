@@ -82,4 +82,4 @@ aws-tag-image:
 aws-push-image:
 	docker push ${AWS_ECR}/${AWS_ECR_REPO}:${IMAGE_TAG}
 
-aws-all: aws-auth-to-ecr aws-build-image aws-tag-image aws-push-image
+aws-all: aws-auth-to-ecr aws-tag-image aws-push-image

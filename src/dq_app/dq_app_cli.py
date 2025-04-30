@@ -37,7 +37,6 @@ def cli(ctx, app_host_pattern, debug):
     sc.load_config(app_host_pattern)
 
     script_name = os.path.splitext(os.path.basename(__file__))[0]
-    # ufl.config_logger(log_file_path_name=f"{sc.app_log_path}/{script_name}.log")
     ufl.config_multi_platform_logger(
         log_level=log_level,
         handlers=sc.log_handlers,

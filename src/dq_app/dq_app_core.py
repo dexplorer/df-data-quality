@@ -42,6 +42,16 @@ def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
     )
     cur_eff_date_yyyymmdd = ed.fmt_date_str_as_yyyymmdd(cur_eff_date)
 
+    # spark: SparkSession = ufs.create_spark_session(
+    #     warehouse_path=sc.hive_warehouse_path, metastore_path=sc.hive_metastore_path
+    # )
+
+    # Create spark session - spark df is created for all dataset types
+    logging.info("Creating spark session using spark connect")
+    spark: SparkSession = ufs.create_spark_session_using_connect(
+        spark_connect_uri=sc.spark_connect_uri,
+    )
+
     ge_context = create_ge_context()
     ge_data_source = create_spark_data_source(
         ge_context=ge_context, ge_data_source_name="spark local"
@@ -52,9 +62,7 @@ def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
     ge_batch_definition = add_batch_definition(
         ge_data_asset=ge_data_asset, ge_batch_definition_name="spark batch"
     )
-    spark: SparkSession = ufs.create_spark_session(
-        warehouse_path=sc.hive_warehouse_path
-    )
+
     src_df = ufs.create_empty_df(spark=spark)
     if dataset.dataset_type == ds.DatasetType.LOCAL_DELIM_FILE:
         # Read the source data file
@@ -126,17 +134,6 @@ def apply_dq_rules(dataset_id: str, cycle_date: str) -> list:
         # Pass the keyword arguments to the function
         expectation = gen_func(**dq_rule.kwargs)
 
-        # Assign the GE function name to a string
-        # gen_func_str = f"gen_func = gx.expectations.{dq_expectation.ge_method}"
-        # Get local variables
-        # _locals = locals()
-        # Execute the function name assignment, this mutates the local namespace
-        # exec(gen_func_str, globals(), _locals)
-        # Grab the newly defined function name from the local namespace dictionary and assign it to generic function variable
-        # gen_func = _locals["gen_func"]
-        # Pass function specific keyword arguments to the generic function
-        # expectation = gen_func(**dq_rule.kwargs)
-
         if expectation:
             # Run the validation
             validation_results = batch.validate(expectation)
@@ -176,6 +173,7 @@ def add_batch_definition(ge_data_asset, ge_batch_definition_name: str):
 
 def define_batch_parms_for_spark_df(df: DataFrame):
     ge_batch_parameters = {"dataframe": df}
+    # ge_batch_parameters = {"dataframe": df, "engine": "spark_connect"}
     return ge_batch_parameters
 
 
