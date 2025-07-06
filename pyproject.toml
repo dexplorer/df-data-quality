@@ -57,6 +57,7 @@ test = [
   "pylint",
   "black",
   "ipython",
+  "isort",
 ]
 all-dev = [
   "dq_app[my-packages-local, cli, api, test]"
